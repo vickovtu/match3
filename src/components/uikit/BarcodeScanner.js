@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text} from 'react-native';
 import { BarCodeScanner, Permissions } from 'expo';
 
 export default class BarcodeScanner extends React.Component {
@@ -13,10 +13,8 @@ export default class BarcodeScanner extends React.Component {
     }
 
     handleBarCodeScanned = ({ type, data }) => {
-        // this.props.bonusScore(1000)
         console.log(`Bar code with type ${type} and data ${data} has been scanned!`);
         this.props.up({data})
-        // this.props.navigation.popToTop()
 
     }
     render() {

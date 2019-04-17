@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import {StyleSheet, Button, View, Text} from 'react-native';
+import {StyleSheet, Button, View} from 'react-native';
 import {TouchableOpacity, SafeAreaView, ScrollView} from 'react-native';
 import MyScore from '../uikit/MyScore';
 import Cat from '../uikit/Cat';
 import MyModal from '../uikit/MyModal'
 import {GenerateMap} from './func/func'
+import {HomeStyles} from "../../style/Style";
+import {navHome} from "../../style/Navigation";
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -17,22 +19,10 @@ export default class HomeScreen extends Component {
         };
         console.log('constructor')
     }
-
-    static navigationOptions = {
-        headerTitle: 'Match-3 Game',
-        headerStyle: {
-            backgroundColor: '#f4511e',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-            fontWeight: 'bold',
-        },
-    };
-
-    resstart1 = () => {
+    static navigationOptions = navHome
+    restart = () => {
         this.setState({popup: false})
     }
-
     RestartGame() {
         this.setState({
             score: 0,
@@ -40,14 +30,6 @@ export default class HomeScreen extends Component {
             cats: GenerateMap(),
             popup: false
         })
-    }
-
-
-    BonusScore = (value) => {
-        console.log(value)
-        let score = this.state.score
-        score += value
-        this.setState({score: score})
     }
 
     updateData = (value) => {
@@ -85,15 +67,15 @@ export default class HomeScreen extends Component {
     render() {
         // console.log('render');
         return (
-            <SafeAreaView style={styles.con}>
+            <SafeAreaView style={HomeStyles.con}>
                 {
-                    this.state.popup ? <MyModal restart={this.resstart1} text1='Вы набрали очередные 100 очков!'
+                    this.state.popup ? <MyModal restart={this.restart} text1='Вы набрали очередные 100 очков!'
                                                 text2='получить бонус 10 очков'/> : null
                 }
                 <MyScore title={this.state.score}/>
                 <View>
                     <ScrollView>
-                        <View style={styles.container}>
+                        <View style={HomeStyles.container}>
                             {this.state.cats.map((item, k) =>
                                 <TouchableOpacity key={k} onPress={() => {
                                     this.updateData(k)
@@ -103,10 +85,6 @@ export default class HomeScreen extends Component {
                         </View>
                     </ScrollView>
                 </View>
-                <Button
-                    title="QR with bonus"
-                    onPress={() => this.props.navigation.navigate('Details', {bonusScore: this.BonusScore})}
-                />
                 <View style={{backgroundColor: '#30d0fe'}}>
                     <Button
                         title="Restart"
@@ -118,42 +96,3 @@ export default class HomeScreen extends Component {
         );
     }
 }
-
-const styles = StyleSheet.create({
-    viewStyle: {
-        backgroundColor: '#30d0fe',
-        height: 116,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        paddingLeft: 22,
-        paddingTop: 71,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.2,
-        elevation: 2,
-        position: 'relative',
-
-    },
-    con: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-
-    },
-    container: {
-
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        flexShrink: 2,
-        justifyContent: 'flex-start',
-        padding: 10,
-        borderColor: 'black',
-        borderWidth: 1
-    },
-    textStyle: {
-        color: '#fff',
-        fontSize: 28,
-        fontFamily: 'AvenirNext-DemiBold',
-
-    }
-});
