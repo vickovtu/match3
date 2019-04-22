@@ -29,6 +29,9 @@ const Cat = (props) => {
             return (
                 <Image source={require('../img/cat5.png')} style={{width: 50, height: 50}}/>
             )
+        default:
+            return null
+
     }
 
 }

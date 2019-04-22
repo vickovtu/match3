@@ -1,87 +1,91 @@
-import React, {Component} from 'react';
-import {StyleSheet, Button, View} from 'react-native';
-import {TouchableOpacity, SafeAreaView, ScrollView} from 'react-native';
-import MyScore from '../uikit/MyScore';
-import Cat from '../uikit/Cat';
-import MyModal from '../uikit/MyModal'
-import {GenerateMap} from './func/func'
-import {HomeStyles} from "../../style/Style";
+import React from "react";
+import {Button, View, SafeAreaView, ScrollView, TouchableOpacity} from "react-native";
+import MyModal from '../uikit/MyModal';
+import {HomeStyles} from "../../style/Style"
 import {navHome} from "../../style/Navigation";
+import {changeScore, newScore, restartGame} from "../../store/actions";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import MyScore from "../uikit/MyScore";
+import Cat from "../uikit/Cat";
+import {algoCats, verification} from "./func/algo";
 
-export default class HomeScreen extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            score: 0,
-            points: 0,
-            cats: GenerateMap(),
-            popup: false
-        };
-        console.log('constructor')
-    }
+let arrCats = []
+
+class HomeScreen extends React.Component {
+    state = {
+        points: 0,
+        popup: false
+    };
     static navigationOptions = navHome
     restart = () => {
         this.setState({popup: false})
     }
+
     RestartGame() {
+        this.props.restart()
         this.setState({
-            score: 0,
             points: 0,
-            cats: GenerateMap(),
             popup: false
         })
     }
 
-    updateData = (value) => {
-        let ct = this.state.cats
-        let start = value
-        let finish = value
-        let score = this.state.score
-        let points = this.state.points
-        for (let i = value - 1; i >= 0 && ct[i] == ct[value]; i--)
-            start = i
-        for (let i = value; i <= ct.length && ct[i] == ct[value]; i++)
-            finish = i
-        if (start != finish) {
-            let a = finish - start + 1
-            if (a >= 3) {
-                ct.splice(start, a)
-                score = score + 30;
-                points += 30
-
-            }
-        }
-        if (points >= 100) {
-            this.setState({popup: true})
-            points = 0
-            score += 10
-        }
-        this.setState({
-            cats: ct,
-            score: score,
-            points: points
-
+    updateData = (row, column) => {
+        arrCats.push({
+            row: row,
+            column: column
         })
+        if (arrCats.length == 2) {
+            let verific = verification(arrCats)
+            console.log("verification", verific)
+            if (verific == false){
+                arrCats = []
+                return
+            }
+            let ct = [...this.props.cats]
+            let newCats = algoCats(arrCats, ct)
+            arrCats = []
+            if (newCats == false)
+                return
+            let points = this.state.points + (newCats.score * 10)
+            console.log("points", points)
+            let score = this.props.score + (newCats.score * 10)
+            if (points >= 100) {
+                this.setState({popup: true, points: 0})
+                score += 10
+            } else
+                this.setState({points: points})
+            this.props.newScore({score: score, cats: newCats.cats})
+        }
     };
 
-    render() {
-        // console.log('render');
+    render(message) {
         return (
             <SafeAreaView style={HomeStyles.con}>
                 {
                     this.state.popup ? <MyModal restart={this.restart} text1='Вы набрали очередные 100 очков!'
                                                 text2='получить бонус 10 очков'/> : null
                 }
-                <MyScore title={this.state.score}/>
+                <MyScore title={this.props.score}/>
                 <View>
                     <ScrollView>
                         <View style={HomeStyles.container}>
-                            {this.state.cats.map((item, k) =>
-                                <TouchableOpacity key={k} onPress={() => {
-                                    this.updateData(k)
-                                }}>
-                                    <Cat item={item}/>
-                                </TouchableOpacity>)}
+                            {
+                                this.props.cats.map((item, r) => {
+                                    let row = item.map((item1, column) => {
+                                        return (
+                                            <TouchableOpacity key={column} onPress={() => {
+                                                this.updateData(r, column)
+                                            }}>
+                                                <Cat item={item1}/>
+                                            </TouchableOpacity>)
+                                    })
+                                    return (
+                                        <View style={HomeStyles.catcontainer} key={r}>
+                                            {row}
+                                        </View>)
+                                })
+                            }
                         </View>
                     </ScrollView>
                 </View>
@@ -96,3 +100,24 @@ export default class HomeScreen extends Component {
         );
     }
 }
+
+//put state to props
+const mapStateToProps = (state) => {
+    // console.log("state mapStateToProps HomeScreen,", state)
+    return {
+        score: state.score,
+        cats: state.cats
+    }
+}
+
+//save & put actions to props
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changeScore: bindActionCreators(changeScore, dispatch),
+        newScore: bindActionCreators(newScore, dispatch),
+        restart: bindActionCreators(restartGame, dispatch),
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

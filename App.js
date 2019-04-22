@@ -5,7 +5,7 @@ import QR from './src/components/scrins/QR';
 import StartScreen from './src/components/scrins/StartScreen';
 import { Provider } from 'react-redux';
 import {createStore} from "redux";
-import {CHANGE_SCORE} from "./src/constants/constans";
+import {reducer} from "./src/store/reducers";
 
 
 //создание всех экранов
@@ -19,16 +19,6 @@ const AppNavigator = createStackNavigator({
     });
 
 
-//изначальное значение state
-const initialState = {
-    score: 0,
-}
-
-//обработка actions (событий)
-const reducer = (state = initialState, action) =>{
-
-    return state
-}
 // создание общего стора (хранилище с данными)
 const store = createStore(reducer)
 

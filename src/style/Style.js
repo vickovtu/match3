@@ -5,23 +5,34 @@ export const StartStyles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        borderWidth: 1,
+        borderRadius: 2,
+        borderColor: '#ddd',
+        borderBottomWidth: 0,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 1,
+        marginLeft: 5,
+        marginRight: 5,
+        marginTop: 10,
     }
 });
 
 export const QrStyles = StyleSheet.create({
     scaner: {
-        margin: 10,
-        borderColor: 'black',
-        borderWidth: 1,
-        height: 100,
-        width:100
-    },
-    container: {
-        flex: 1,
         alignItems: "center",
-        justifyContent: "center"
-    }
+        justifyContent: "center",
+        margin: 10,
+        padding: 5,
+        borderColor: 'black',
+        borderWidth: 4,
+        height: 210,
+        width:210,
+        borderRadius: 10,
+    },
 });
 
 export const HomeStyles = StyleSheet.create({
@@ -32,15 +43,18 @@ export const HomeStyles = StyleSheet.create({
 
     },
     container: {
-
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+        height: 480,
+        width: 380,
+        flexDirection: 'column',
         flexShrink: 2,
         justifyContent: 'flex-start',
         padding: 10,
         borderColor: 'black',
         borderWidth: 1
     },
+    catcontainer : {
+        flexDirection: 'row',
+    }
 });
 
 export const ModalStyles = StyleSheet.create({
@@ -75,6 +89,7 @@ export const ScoreStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingLeft: 20,
+        paddingRight: 20,
         paddingTop: 0,
         shadowColor: '#000',
         shadowOffset: { width:0, height: 2},
